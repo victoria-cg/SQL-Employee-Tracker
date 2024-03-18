@@ -8,6 +8,9 @@ const inquirer = require("inquirer");
 const {
   mainMenuQuestions,
   addDepartmentQuestions,
+  addRoleQuestions, 
+  addEmployeeQuestions, 
+  updateEmployeeQuestions
 } = require("./lib/userInput");
 
 //create empty database variable, defined inside async function at the bottom of this index.js file
