@@ -11,7 +11,7 @@ CREATE TABLE department (
 
 -- Foreign key relationship: referring to department.id
 CREATE TABLE role (
-    id INT NOT NULL PRIMARY KEY,
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL NOT NULL,
     department_id INT NOT NULL FOREIGN KEY
@@ -21,7 +21,7 @@ CREATE TABLE role (
 );
 -- Foreign key relationship: 
 CREATE TABLE employee (
-    id INT NOT NULL PRIMARY KEY,
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     role_id INT NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE employee (
   REFERENCES role(id)
   ON DELETE SET NULL
     -- Self referencing foreign key relationship that can be null will be manager_id
-    --can there be 2 foreign keys in the same table?
+    --can there be 2 foreign keys in the same table? yes
     FOREIGN KEY (manager_id)
     REFERENCES employee(id)
     ON DELETE SET NULL
