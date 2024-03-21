@@ -50,6 +50,7 @@ console.log(results)
 //asks the menu questions again 
 mainMenu()
 }
+
 //TO DO: Async function to view all employees & joined with roles
 
 
@@ -59,6 +60,10 @@ mainMenu()
 async function addRole() {
   console.log("Adding role");
   const { title, salary, dept_name} = await inquirer.prompt(addRoleQuestions);
+  //instead of adding dept  name, user would choose from existing list of depts
+  //user gives title and salary, chooses a dept, insert the title and salary
+  //variable for inquirer choices of list of all name and id number for depts
+
   // Insert role info into table
   //need to insert dept_name into dept datble instead and then join?
   const addQuery = `INSERT INTO role (title, salary, department_id) VALUES ("${title}", "${salary}", "${dept_name}");`
@@ -71,12 +76,26 @@ async function addRole() {
 async function mainMenu() {
   const { menuChoice } = await inquirer.prompt(mainMenuQuestions);
   switch (menuChoice) {
-    case "Add Department":
+    case "add a department":
       addDepartment();
       break;
-    case "View Department":
+    case "view all departments":
       viewDepartment();
       break;
+    case "view all roles":
+      viewRoles();
+      break;
+    case "view all employees":
+      viewEmployees();
+      break;
+    case "add a role":
+      addRole();
+      break;
+    case "add an employee":
+      addEmployee();
+      break;
+    case "update an employee":
+      updateEmployee();
     default:
       break;
   }
