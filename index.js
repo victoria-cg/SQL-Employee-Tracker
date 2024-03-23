@@ -59,20 +59,34 @@ mainMenu()
 //use inquirer to iterate through array of object name values and change role id to title
 async function addRole() {
   console.log("Adding role");
-  const { title, salary, dept_name} = await inquirer.prompt(addRoleQuestions);
-  //instead of adding dept  name, user would choose from existing list of depts
-  //user gives title and salary, chooses a dept, insert the title and salary
-  //variable for inquirer choices of list of all name and id number for depts
+  //user answers inquirer questions to provide title and salary
+  const { title, salary} = await inquirer.prompt(addRoleQuestions);
+//query database to get department names and ids from the database 'department' table, put info in a variable
+const currentDepartments = await db.query(`SELECT id, name FROM department;`);
+//use .map to make a dynamic list of department names, put in variable for inquirer to use
+const deptChoices = currentDepartments.map(dept => dept.name)
+//promp question for user to choose dept name from list of existing departments
+const {deptName} = await inquirer.prompt([{
+  type: "list",
+  message: "What is the department name of the new role?",
+  name: "deptName",
+  choices: deptChoices
+}]);
 
-  // Insert role info into table
-  //need to insert dept_name into dept datble instead and then join?
-  const addQuery = `INSERT INTO role (title, salary, department_id) VALUES ("${title}", "${salary}", "${dept_name}");`
-  const [results, data] = await db.query(addQuery);
+//look up dept name in the database department table that matches chosen dept name from user selection
+const findDeptName = currentDepartments.find(dept => dept.name === deptName);
+//make a variable to get the id number for the chosen dept name
+const department_id = findDeptName.id;
+
+  // Insert role info into table, use prepared statement '?' placeholder to prevent SQL injection
+  const addQuery = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);`
+  const [results, data] = await db.query(addQuery, [title, salary, department_id]);
   //call viewRoles to see the results of added info
  viewRoles()
 }
 
 //function allows usert to select an action to do using questions with inquirer.prompt
+//cases match a selection and then call the related function
 async function mainMenu() {
   const { menuChoice } = await inquirer.prompt(mainMenuQuestions);
   switch (menuChoice) {
@@ -108,7 +122,7 @@ async function app() {
       host: "localhost",
       // MySQL username
       user: "root",
-      // Use must input MySQL password into empty string
+      // User must input MySQL password into empty string
       password: "",
       database: "employeeTracker_db",
     },
