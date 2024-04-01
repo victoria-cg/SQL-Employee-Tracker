@@ -21,8 +21,10 @@ async function addDepartment() {
   console.log("Adding department");
   const { dept_name } = await inquirer.prompt(addDepartmentQuestions);
   // Insert name into table
-  const addQuery = `INSERT INTO department (name) VALUES ("${dept_name}");`
+  const addQuery = `INSERT INTO department (name) VALUES ('${dept_name}');`
   const [results, data] = await db.query(addQuery);
+  //print table to the console: this doesn't seem to work/show up in the console
+  console.log(results)
   //call viewDepartment function to display table with new results of addQuery
  viewDepartment()
 }
@@ -51,8 +53,17 @@ console.log(results)
 mainMenu()
 }
 
-//TO DO: Async function to view all employees & joined with roles
-
+//Async function to view all employees & joined with roles
+async function viewEmployees() {
+  console.log("Viewing employees");
+  //read employees table joined with roles table based on matching ids
+  const readQuery = `SELECT * FROM employee JOIN role ON employee.role_id = role.id;`;
+  const [results, data] = await db.query(readQuery);
+  //prints table in the console
+console.log(results)
+//asks the menu questions again 
+mainMenu()
+}
 
 //async function to add a role
 //TO DO: figure out how to get the dept ID to populate to the role table: just call viewroles to see the entire joined table?
@@ -62,21 +73,21 @@ async function addRole() {
   //user answers inquirer questions to provide title and salary
   const { title, salary} = await inquirer.prompt(addRoleQuestions);
 //query database to get department names and ids from the database 'department' table, put info in a variable
-const currentDepartments = await db.query(`SELECT id, name FROM department;`);
+const currentDepartments = await db.query(`SELECT id, name FROM department`);
 //use .map to make a dynamic list of department names, put in variable for inquirer to use
 const deptChoices = currentDepartments.map(dept => dept.name)
-//promp question for user to choose dept name from list of existing departments
+//prompt question for user to choose dept name from list of existing departments
 const {deptName} = await inquirer.prompt([{
   type: "list",
-  message: "What is the department name of the new role?",
+  message: "Which department does the new role belong to?",
   name: "deptName",
   choices: deptChoices
 }]);
 
-//look up dept name in the database department table that matches chosen dept name from user selection
-const findDeptName = currentDepartments.find(dept => dept.name === deptName);
-//make a variable to get the id number for the chosen dept name
-const department_id = findDeptName.id;
+//look up dept name in the database department table that matches chosen dept name from user selection in const {deptName} inquirer prompt above
+const chosenDept = currentDepartments.find(chosenDept => chosenDept.name === deptName);
+//make a variable to get the id number for the chosen dept by using the ID corresponding to the dept name in the database found in const chosenDept 
+const department_id = chosenDept.id;
 
   // Insert role info into table, use prepared statement '?' placeholder to prevent SQL injection
   const addQuery = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);`
@@ -123,7 +134,7 @@ async function app() {
       // MySQL username
       user: "root",
       // User must input MySQL password into empty string
-      password: "",
+      password: "N_CdV_1527",
       database: "employeeTracker_db",
     },
     console.log(`Connected to the employeeTracker_db database.`)
