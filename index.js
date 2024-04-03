@@ -134,7 +134,7 @@ async function app() {
       // MySQL username
       user: "root",
       // User must input MySQL password into empty string
-      password: "",
+      password: "N_CdV_1527",
       database: "employeeTracker_db",
     },
     console.log(`Connected to the employeeTracker_db database.`)
